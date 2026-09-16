@@ -3,13 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sala — transmita e converse</title>
-  <meta name="description" content="Crie uma sala, transmita sua tela e converse com os amigos. Sem cadastro." />
+  <title>Sala — transmita, fale e converse</title>
+  <meta name="description" content="Crie uma sala, transmita sua tela, fale e converse com os amigos. Sem cadastro." />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%B0%EF%B8%8F%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    // Aplica o tema antes de pintar (evita flash)
+    (function () {
+      try {
+        var t = localStorage.getItem('sala.theme');
+        if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
+    })();
+  </script>
 </head>
 <body>
   <!-- ===================== LOBBY ===================== -->
@@ -19,7 +29,7 @@
         <span class="brand-logo">🛰️</span>
         <span class="brand-name">Sala</span>
       </div>
-      <h1 class="lobby-title">Transmita sua tela.<br />Converse com a galera.</h1>
+      <h1 class="lobby-title">Transmita, fale<br />e converse com a galera.</h1>
       <p class="lobby-sub">Sem cadastro, sem download. Escolha um nome, um avatar e entre.</p>
 
       <label class="field-label">Seu nome</label>
@@ -38,7 +48,7 @@
       <button id="enterBtn" class="btn btn-primary btn-block">Entrar na sala</button>
       <button id="createBtn" class="btn btn-ghost btn-block">Criar uma nova sala</button>
 
-      <p class="lobby-foot">P2P via WebRTC · seu vídeo vai direto pros amigos</p>
+      <p class="lobby-foot">P2P via WebRTC · sua voz e vídeo vão direto pros amigos</p>
     </div>
   </main>
 
@@ -58,6 +68,13 @@
       </div>
       <div class="topbar-right">
         <span id="connState" class="conn-state">conectando…</span>
+        <button id="themeBtn" class="icon-btn" title="Alternar tema claro/escuro">
+          <svg id="iconMoon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="iconSun" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button id="settingsBtn" class="icon-btn" title="Configurações de áudio">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
         <button id="sidebarToggle" class="icon-btn" title="Mostrar/ocultar chat">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </button>
@@ -71,17 +88,26 @@
           <div id="emptyStage" class="empty-stage">
             <div class="empty-emoji">🖥️</div>
             <h2>Ninguém está transmitindo</h2>
-            <p>Clique em <b>Transmitir tela</b> pra começar a compartilhar.</p>
+            <p>Fale à vontade (a voz já está ligada) ou clique em <b>Transmitir tela</b>.</p>
           </div>
         </div>
 
         <!-- Controls -->
         <div class="controls">
+          <button id="micBtn" class="ctrl-btn" title="Ligar/desligar microfone">
+            <svg id="iconMicOn" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+            <svg id="iconMicOff" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+            <span id="micBtnLabel">Microfone</span>
+          </button>
           <button id="shareBtn" class="btn btn-primary control-main">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             <span id="shareBtnLabel">Transmitir tela</span>
           </button>
-          <button id="leaveBtn" class="btn btn-danger control-main" title="Sair da sala">
+          <button id="pipBtn" class="ctrl-btn" title="Janela flutuante (quem está falando)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h20v16H2z" opacity="0"/><rect x="3" y="4" width="18" height="14" rx="2"/><rect x="12" y="11" width="7" height="5" rx="1" fill="currentColor"/></svg>
+            <span>Flutuar</span>
+          </button>
+          <button id="leaveBtn" class="ctrl-btn danger" title="Sair da sala">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             <span>Sair</span>
           </button>
@@ -112,8 +138,56 @@
     </div>
   </div>
 
+  <!-- ===================== SETTINGS MODAL ===================== -->
+  <div id="settingsOverlay" class="overlay hidden">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>Configurações</h2>
+        <button id="settingsClose" class="icon-btn" title="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Microfone -->
+        <div class="setting-group">
+          <label class="setting-label">🎙️ Microfone</label>
+          <select id="micSelect" class="select-input"></select>
+          <div class="test-row">
+            <div class="meter"><div id="micMeterFill" class="meter-fill"></div></div>
+            <span class="test-hint">Fale para testar — a barra deve se mexer</span>
+          </div>
+        </div>
+
+        <!-- Saída de áudio -->
+        <div class="setting-group">
+          <label class="setting-label">🔊 Saída de áudio (fone / caixa)</label>
+          <select id="outputSelect" class="select-input"></select>
+          <div class="test-row">
+            <button id="testSoundBtn" class="btn btn-ghost btn-sm">▶ Testar som</button>
+            <span id="outputHint" class="test-hint">Toca um bip na saída escolhida</span>
+          </div>
+        </div>
+
+        <!-- Tema -->
+        <div class="setting-group">
+          <label class="setting-label">🎨 Tema</label>
+          <div class="seg">
+            <button id="themeDark" class="seg-btn" data-theme="dark">🌙 Escuro</button>
+            <button id="themeLight" class="seg-btn" data-theme="light">☀️ Claro</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div id="toast" class="toast hidden"></div>
+
+  <!-- Áudios remotos (voz) e scaffolding do PiP (ocultos) -->
+  <div id="audioSink" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden"></div>
+  <canvas id="pipCanvas" width="480" height="270" style="display:none"></canvas>
+  <video id="pipVideo" muted playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></video>
 
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <script src="app.js"></script>
